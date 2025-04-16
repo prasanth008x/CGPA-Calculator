@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CGPA Calculator</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS file -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="main-content">
+      <nav class="navbar">
+        <div class="brand" onclick="showCalculator()">GetToKnow</div>
+        <button onclick="showContact()">Contact</button>
+      </nav>
+  
+      <!-- CGPA Calculator Section -->
+      <div class="container" id="calculator-section">
+        <h2>CGPA Calculator</h2>
+        <form id="cgpaForm" class="form-two-column">
+          <!-- Left Column -->
+          <div class="left-column">
+            <div class="inline-form">
+              <label for="name">Name:</label>
+              <input type="text" id="name" required />
+            </div>
+            <div class="inline-form">
+              <label for="qualification">Qualification:</label>
+              <input type="text" id="qualification" required />
+            </div>
+            <div class="inline-form">
+              <label for="college">College Name:</label>
+              <input type="text" id="college" required />
+            </div>
+            <div class="inline-form">
+              <label for="semester">Semester:</label>
+              <select id="semester" required>
+                <option value="">Select</option>
+                <option>Semester 1</option>
+                <option>Semester 2</option>
+                <option>Semester 3</option>
+                <option>Semester 4</option>
+                <option>Semester 5</option>
+                <option>Semester 6</option>
+                <option>Semester 7</option>
+                <option>Semester 8</option>
+              </select>
+            </div>
+          </div>
+  
+          <!-- Right Column -->
+          <div class="right-column">
+            <div class="subjects" id="subjectsContainer">
+              <label>Subjects and Grades:</label>
+              <div class="subject-entry">
+                <input type="text" placeholder="Subject Name" class="subject" required />
+                <select class="grade" required>
+                  <option value="">Select Grade</option>
+                  <option value="10">O</option>
+                  <option value="9">A+</option>
+                  <option value="8">A</option>
+                  <option value="7">B+</option>
+                  <option value="6">B</option>
+                  <option value="5">C+</option>
+                  <option value="0">C (Fail)</option>
+                </select>
+                <button type="button" class="clear-btn" onclick="clearSubject(this)">Clear</button>
+              </div>
+            </div>
+            <button type="button" onclick="addSubject()">+ Add Subject</button>
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+  
+        <div id="result"></div>
+        <button id="printBtn" onclick="printResult()">Print</button>
+      </div>
+  
+      <!-- Contact Section -->
+      <div id="contact-section" class="contact-section" style="display: none;">
+        <h3>Contact Us</h3>
+        <!-- <p><strong>Phone:</strong> +91 7558143468</p> -->
+        <p><strong>Email:</strong> prasantharumugam16@gmail.com</p>
+        <p><strong>Address:</strong> T.malai, Karur, Tamil Nadu, India</p>
+      </div>
+    </div>
+  
+    <!-- Footer -->
+    <div class="footer">
+      &copy; 2025 Bagged by prasanth. All rights reserved.
+    </div>
+
+
+
+  <script>
+    // Function to add new subject input
+    function addSubject() {
+      const container = document.getElementById('subjectsContainer');
+      const div = document.createElement('div');
+      div.classList.add('subject-entry');
+      div.innerHTML = `
+        <input type="text" placeholder="Subject Name" class="subject" required />
+        <select class="grade" required>
+          <option value="">Select Grade</option>
+          <option value="10">O</option>
+          <option value="9">A+</option>
+          <option value="8">A</option>
+          <option value="7">B+</option>
+          <option value="6">B</option>
+          <option value="5">C+</option>
+          <option value="0">C (Fail)</option>
+        </select>
+        <button type="button" class="clear-btn" onclick="clearSubject(this)">Clear</button>
+      `;
+      container.appendChild(div);
+    }
+
+    // Function to clear the subject column
+    function clearSubject(button) {
+      const subjectEntry = button.closest('.subject-entry');  // Find the closest subject-entry div
+      subjectEntry.remove();  // Remove the entire subject-entry (subject name and grade)
+    }
+
+    document.getElementById('cgpaForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const qualification = document.getElementById('qualification').value;
+  const semester = document.getElementById('semester').value;
+  const subjects = document.querySelectorAll('.subject');
+  const college = document.getElementById('college').value;
+  const grades = document.querySelectorAll('.grade');
+
+  let tableRows = '';
+  let total = 0, count = 0;
+
+  subjects.forEach((s, i) => {
+    const gradeVal = parseFloat(grades[i].value);
+    const gradeText = grades[i].options[grades[i].selectedIndex].text;
+    const subjectName = s.value;
+    tableRows += `<tr>
+                    <td>${subjectName}</td>
+                    <td>${gradeText}</td>
+                    <td>${gradeVal}</td>
+                  </tr>`;
+    if (!isNaN(gradeVal)) {
+      total += gradeVal;
+      count++;
+    }
+  });
+
+  const cgpa = count > 0 ? (total / count).toFixed(2) : '0.00';
+
+
+  document.getElementById('result').innerHTML = `
+    <div class="result-box">
+      <h3 style="text-align:center;">Submission Details</h3> 
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>College:</strong> ${college}</p>
+      <p><strong>Qualification:</strong> ${qualification}</p>
+      <p><strong>Semester/Year:</strong> ${semester}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Grade</th>
+            <th>Grade Point</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+          <tr>
+            <td colspan="2"><strong>Total CGPA</strong></td>
+            <td><strong>${cgpa}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('printBtn').style.display = 'inline-block';
+});
+
+function printResult() {
+  const printContent = document.getElementById("result").innerHTML;
+  const originalContent = document.body.innerHTML;
+
+  document.body.innerHTML = printContent;
+  window.print();
+  document.body.innerHTML = originalContent;
+
+  // Don't reload, instead re-show your app if needed
+   // optional only if you want to reset after print
+}
+
+    function showContact() {
+      document.getElementById('calculator-section').style.display = 'none';
+      document.getElementById('contact-section').style.display = 'block';
+    }
+
+    function showCalculator() {
+      document.getElementById('contact-section').style.display = 'none';
+      document.getElementById('calculator-section').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
